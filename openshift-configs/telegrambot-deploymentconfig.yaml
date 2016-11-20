@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    service: telegrambot
+  name: telegrambot
+spec:
+  replicas: 1
+  selector:
+    service: telegrambot
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: telegrambot
+    spec:
+      containers:
+      - env:
+        - name: NAMES
+          value: /names/names
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: telegrambot
+              key: token
+        - name: WEBHOOK_URL
+          valueFrom:
+            secretKeyRef:
+              name: telegrambot
+              key: webhook
+        image: ' '
+        name: telegrambot
+        volumeMounts:
+        - name: namesvol
+          mountPath: "/names"
+          readOnly: true
+        resources: {}
+      volumes:
+      - name: namesvol
+        configMap:
+          name: telegrambot
+      restartPolicy: Always
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - telegrambot
+      from:
+        kind: ImageStreamTag
+        name: telegrambot:latest
+    type: ImageChange
+status: {}
