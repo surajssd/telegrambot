@@ -1,8 +1,18 @@
 # telegrambot
 
-### Build:
+### Get telegrambot for usage:
 
 ```bash
+$ go get github.com/surajssd/telegrambot
+```
+
+### Development environment
+
+Fork this repo
+
+```bash
+$ git clone https://github.com/<YOUR GITHUB ID>/telegrambot $GOPATH/src/github.com/surajssd/telegrambot
+$ cd $GOPATH/src/github.com/surajssd/telegrambot
 $ go build
 ```
 
