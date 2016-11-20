@@ -218,6 +218,21 @@ func getNames() ([]string, error) {
 	return readNames.Names, nil
 }
 
+func shouldIPingToday(t time.Time) bool {
+	noping := os.Getenv("NOPINGDAYS")
+	if noping == "" {
+		noping = "Saturday,Sunday"
+		logrus.Infof("NOPINGDAYS not set using default: %s", noping)
+	}
+	noPingDays := strings.Split(noping, ",")
+	for _, day := range noPingDays {
+		if t.Weekday().String() == day {
+			return false
+		}
+	}
+	return true
+}
+
 func PingForLunch() {
 
 	// set hour
@@ -248,8 +263,7 @@ func PingForLunch() {
 		t := time.Now()
 		indiaTime := t.In(indiaTZ)
 
-		if indiaTime.Weekday().String() == "Saturday" || indiaTime.Weekday().String() == "Sunday" {
-			//if indiaTime.Weekday().String() == "Saturday" {
+		if !shouldIPingToday(indiaTime) {
 			continue
 		}
 
