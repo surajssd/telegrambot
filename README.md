@@ -1,6 +1,5 @@
 # telegrambot
 
-
 ### Build:
 
 ```bash
@@ -17,7 +16,12 @@ $ export WEBHOOK_URL=<your webhook url>
 
 Optional environment variables:
 ```bash
-$ export HOUR=10    # DEFAULT: 12
-$ export MINUTE=10  # DEFAULT: 45
+$ export HOUR=10                    # DEFAULT: 12
+$ export MINUTE=10                  # DEFAULT: 45
 $ export NAMES=<path to names file> # DEFAULT: names.yml
+```
+
+Finally run as:
+```bash
+$ ./telegrambot
 ```

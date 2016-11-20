@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:centos7
 
 MAINTAINER "Suraj Deshmukh <surajd@redhat.com>"
 

@@ -1,0 +1,6 @@
+version: 2
+
+services:
+  telegrambot:
+    image: docker.io/surajd/telegrambot
+
