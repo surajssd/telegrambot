@@ -3,4 +3,13 @@ version: "2"
 services:
   telegrambot:
     build: .
+    environment:
+      TOKEN: $TOKEN
+      WEBHOOK_URL: $WEBHOOK_URL
+      NOPINGDAYS: $NOPINGDAYS
+      NAMES: "/names/names.yml"
+      HOUR: $HOUR
+      MINUTE: $MINUTE
+    volumes:
+      - ./names.yml:/names/names.yml:Z
 
