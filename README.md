@@ -36,3 +36,65 @@ Finally run as:
 ```bash
 $ ./telegrambot
 ```
+
+
+### Deploy on docker-compose
+
+```bash
+export TOKEN=<token>
+export WEBHOOK_URL=<url>
+export NOPINGDAYS="Saturday"
+export HOUR=18
+export MINUTE=19
+export NAMES="/names/names"
+
+docker-compose up
+```
+
+### Deploy on openshift
+
+
+Create an openshift project
+```bash
+oc new-project telegrambot
+```
+
+Expose all environments
+```bash
+export TOKEN=<token>
+export WEBHOOK_URL=<url>
+export NOPINGDAYS="Saturday"
+export HOUR=18
+export MINUTE=19
+export NAMES="/names/names"
+```
+
+Convert all the configs using kompose
+```bash
+mkdir configs
+kompose --provider openshift convert -o configs/ --build-repo https://github.com/surajssd/telegrambot
+```
+
+Create configmap for names
+```bash
+oc create configmap telegrambot --from-file=names=<path to names.yml>
+```
+
+Add the configmap info to deploymentconfig
+
+```yaml
+volumeMounts:
+- name: namevol
+  mountPath: "/names"
+  readOnly: true
+```
+Add above to container in dc
+
+```yaml
+volumes:
+- name: namevol
+  configMap:
+    name: telegrambot
+```
+Add above to pod in dc.
+
