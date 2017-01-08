@@ -1,8 +1,12 @@
-FROM centos:centos7
+FROM docker.io/surajd/telegrambotbuilder
 
-MAINTAINER "Suraj Deshmukh <surajd@redhat.com>"
 
-COPY ./telegrambot /
+RUN go get -u -v gopkg.in/yaml.v2 && \
+    go get -u -v github.com/Sirupsen/logrus
 
-ENTRYPOINT [ "/telegrambot" ]
 
+RUN git clone https://github.com/surajssd/telegrambot $GOPATH/src/github.com/surajssd/telegrambot && \
+    cd $GOPATH/src/github.com/surajssd/telegrambot && \
+    go install telegrambot.go
+
+ENTRYPOINT [ "/go/bin/telegrambot" ]
