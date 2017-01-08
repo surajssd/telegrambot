@@ -7,7 +7,7 @@ services:
       TOKEN: $TOKEN
       WEBHOOK_URL: $WEBHOOK_URL
       NOPINGDAYS: $NOPINGDAYS
-      NAMES: "/names/names.yml"
+      NAMES: $NAMES
       HOUR: $HOUR
       MINUTE: $MINUTE
     volumes:
