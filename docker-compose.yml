@@ -11,5 +11,5 @@ services:
       HOUR: $HOUR
       MINUTE: $MINUTE
     volumes:
-      - ./names.yml:/names/names.yml:Z
+      - ./names.yml:/names/names:Z
 

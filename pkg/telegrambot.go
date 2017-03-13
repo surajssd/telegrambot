@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -22,11 +21,6 @@ const (
 	IndiaTimeZoneID = "Asia/Kolkata"
 )
 
-type BotInfo struct {
-	URL        *url.URL
-	WebhookURL *url.URL
-}
-
 var TOKEN string
 var WEBHOOK_URL string
 var NAMES_FILE string
@@ -34,52 +28,13 @@ var NOPINGDAYS string
 var HOUR int
 var MINUTE int
 
-func readAllEnvs() error {
-
-	logrus.Debug("Reading all the environment variables.")
-	TOKEN = os.Getenv("TOKEN")
-	if TOKEN== "" {
-		return fmt.Errorf("Please set environment variable TOKEN")
-	}
-
-	WEBHOOK_URL = os.Getenv("WEBHOOK_URL")
-	if WEBHOOK_URL == "" {
-		return fmt.Errorf("Please set environment variable WEBHOOK_URL")
-	}
-
-	NAMES_FILE = os.Getenv("NAMES")
-	if NAMES_FILE == "" {
-		NAMES_FILE = "names.yml"
-		logrus.Infof("Using default names file name: %s", NAMES_FILE)
-	}
-
-	NOPINGDAYS = os.Getenv("NOPINGDAYS")
-	if NOPINGDAYS == "" {
-		NOPINGDAYS = "Saturday,Sunday"
-		logrus.Infof("NOPINGDAYS not set using default: %s", NOPINGDAYS)
-	}
-
-	var err error
-	// set HOUR
-	hourstr := os.Getenv("HOUR")
-	HOUR, err = strconv.Atoi(hourstr)
-	if err != nil {
-		HOUR = 12
-		logrus.Infof("Using default hour: %d", HOUR)
-	}
-
-	// set minute
-	minstr := os.Getenv("MINUTE")
-	MINUTE, err = strconv.Atoi(minstr)
-	if err != nil {
-		MINUTE = 45
-		logrus.Infof("Using default minutes: %d", MINUTE)
-	}
-	return nil
-}
 
 func (b *BotInfo) InitBotObject() error {
 	var err error
+	if TOKEN == "" {
+		return fmt.Errorf("Please provide TOKEN for accessing the telegram server")
+	}
+
 	b.URL, err = url.Parse(URL + TOKEN)
 	if err != nil {
 		return fmt.Errorf("Error parsing url: %s, Error: %v", (URL + TOKEN), err)
@@ -93,57 +48,6 @@ func (b *BotInfo) InitBotObject() error {
 
 	logrus.Infof("Botinfo object initialized.")
 	return nil
-}
-
-type User struct {
-	ID        int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name,omitempty"`
-	UserName  string `json:"username,omitempty"`
-}
-
-type Chat struct {
-	ID                          int    `json:"id"`
-	Type                        string `json:"type"`
-	Title                       string `json:"title,omitempty"`
-	Username                    string `json:"username,omitempty"`
-	FirstName                   string `json:"first_name,omitempty"`
-	LastName                    string `json:"last_name,omitempty"`
-	AllMembersAreAdministrators bool
-}
-
-type MessageEntity struct {
-	Type   string `json:"type"`
-	Offset int    `json:"offset"`
-	Length int    `json:"length"`
-	URL    string `json:"url,omitempty"`
-	User   User   `json:"user,omitempty"`
-}
-
-type Message struct {
-	MessageID int             `json:"message_id"`
-	From      User            `json:"from,omitempty"`
-	Date      int             `json:"date"`
-	Chat      Chat            `json:"chat"`
-	Text      string          `json: "text,omitempty"`
-	Entities  []MessageEntity `json:"entities,omitempty"`
-}
-
-type Update struct {
-	UpdateID int     `json:"update_id"`
-	Message  Message `json:"message"`
-}
-
-type Response struct {
-	OK     bool     `json:"ok"`
-	Result []Update `json:"result"`
-}
-
-type ResponseSentMessage struct {
-	OK          bool    `json:"ok"`
-	Result      Message `json:"result,omitempty"`
-	ErrorCode   int     `json:"error_code,omitempty"`
-	Description string  `json:"description,omitempty"`
 }
 
 func (b *BotInfo) GetUpdates() ([]Update, error) {
@@ -308,11 +212,8 @@ func PingForLunch() {
 	}
 }
 
-func main() {
+func StartBot() {
 	logrus.SetLevel(logrus.DebugLevel)
-	if err := readAllEnvs(); err != nil {
-		logrus.Fatalf("Error reading env :%v", err)
-	}
-	// go PingForLunch()
+
 	PingForLunch()
 }
