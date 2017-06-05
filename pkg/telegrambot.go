@@ -175,7 +175,8 @@ func PingForLunch() {
 	}
 
 	// flag that keeps track if ping was done or not
-	var pingdone bool
+	var pingLunch bool
+	var pingFri bool
 
 	logrus.Debug("Starting endless loop")
 	for {
@@ -187,7 +188,7 @@ func PingForLunch() {
 		}
 
 		// ping only when time matches and if ping not done for that day
-		if indiaTime.Hour() == HOUR && indiaTime.Minute() == MINUTE && !pingdone {
+		if indiaTime.Hour() == HOUR && indiaTime.Minute() == MINUTE && !pingLunch {
 			// trigger send message from here:set
 			logrus.Debug("Fetching names from the names file.")
 			names, err := getNames()
@@ -204,10 +205,34 @@ func PingForLunch() {
 
 			message := fmt.Sprintf("ping for lunch %s", strings.Join(nameTags, " "))
 			PostMessage(message)
-			pingdone = true
-		} else if indiaTime.Hour() == 1 && pingdone {
-			// reset pingdone flag at 1 in morning
-			pingdone = false
+			pingLunch = true
+		} else if indiaTime.Hour() == 1 && pingLunch {
+			// reset pingLunch flag at 1 in morning
+			pingLunch = false
+		}
+
+		// friday snacks
+		if indiaTime.Weekday().String() == "Friday" && indiaTime.Hour() == 16 && indiaTime.Minute() == 0 && !pingFri {
+		//if indiaTime.Weekday().String() == "Monday" && indiaTime.Hour() == 11 && indiaTime.Minute() == 28 && !pingFri {
+			// trigger send message from here:set
+			logrus.Debug("Fetching names from the names file.")
+			names, err := getNames()
+			if err != nil {
+				logrus.Errorln(err)
+				continue
+			}
+
+			var nameTags []string
+			for _, name := range names {
+				name = fmt.Sprintf("@%s", name)
+				nameTags = append(nameTags, name)
+			}
+
+			message := fmt.Sprintf("ping for Friday snacks %s", strings.Join(nameTags, " "))
+			PostMessage(message)
+			pingFri = true
+		} else if indiaTime.Hour() == 1 && pingFri {
+			pingFri = false
 		}
 	}
 }
